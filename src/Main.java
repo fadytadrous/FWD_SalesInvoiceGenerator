@@ -6,5 +6,6 @@ public class Main {
 	// write your code here
         GUI app = new GUI();
         app.setVisible(true);
+        app.pack();
     }
 }

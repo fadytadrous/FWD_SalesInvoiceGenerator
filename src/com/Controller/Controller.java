@@ -81,4 +81,12 @@ public class Controller {
         String filePath = Paths.get("").toAbsolutePath() + "\\resources\\InvoiceItems.csv";
         saveInvoicesToFile(filePath, table);
     }
+
+    public void saveInvoiceItemsChanges(JTable invoicesItemsTable) {
+        try {
+            saveItems(invoicesItemsTable);
+        }catch (IOException ex) {
+            JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.PLAIN_MESSAGE);
+        }
+    }
 }

@@ -2,6 +2,7 @@ package com.GUI;
 
 import com.Controller.Controller;
 import com.Controller.DateCellRenderer;
+import com.Controller.JtableController;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -24,7 +25,6 @@ public class GUI extends JFrame implements ActionListener {
 
     private final JPanel leftSideBottomPanel;
     private final JPanel rightSideBottomPanel;
-    private final JPanel rightSideTopPanel;
     private final JPanel invoiceNumPanel;
     private final JPanel invoiceDatePanel;
     private final JPanel customerNamePanel;
@@ -52,6 +52,7 @@ public class GUI extends JFrame implements ActionListener {
     private final String[] invoiceItemsTableColumns = {"No.","Item Name","Item Price","Count","Item Total"};
     private String filePath;
     private final Controller Controller = new Controller();
+    private final JtableController tableController = new JtableController();
     private String[][] invoicesData;
 
     public GUI(){
@@ -77,8 +78,6 @@ public class GUI extends JFrame implements ActionListener {
 
         leftSideBottomPanel = new JPanel();
         rightSideBottomPanel = new JPanel();
-        rightSideTopPanel = new JPanel();
-        rightSideTopPanel.setLayout(new BoxLayout(rightSideTopPanel,BoxLayout.Y_AXIS));
         invoiceNumPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         invoiceDatePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         customerNamePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -99,7 +98,7 @@ public class GUI extends JFrame implements ActionListener {
         cancelChangesBtn = new JButton("Cancel");
         createNewInvoiceBtn = new JButton("Create New Invoice");
         deleteInvoiceBtn = new JButton("Delete Invoice");
-        /*Tables*/
+        /**Tables**/
         invoicesTableModel = new DefaultTableModel();
         invoicesTable = new JTable(invoicesTableModel);
         invoiceItemsTableModel = new DefaultTableModel();
@@ -130,7 +129,9 @@ public class GUI extends JFrame implements ActionListener {
         invoicesTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                showInvoicesTableRowDetails();
+                tableController.showInvoicesTableRowDetails(invoicesTableModel,
+                        invoicesTable,invoiceNumValue,
+                        invoiceDateInput, customerNameInput, invoiceTotalValue);
             }
         });
 
@@ -150,50 +151,24 @@ public class GUI extends JFrame implements ActionListener {
         customerNamePanel.add(customerNameInput);
         invoiceTotalPanel.add(invoiceTotalLabel);
         invoiceTotalPanel.add(invoiceTotalValue);
-        rightSideTopPanel.add(invoiceNumPanel);
-        rightSideTopPanel.add(invoiceDatePanel);
-        rightSideTopPanel.add(customerNamePanel);
-        rightSideTopPanel.add(invoiceTotalPanel);
+        rightSidePanel.add(invoiceNumPanel);
+        rightSidePanel.add(invoiceDatePanel);
+        rightSidePanel.add(customerNamePanel);
+        rightSidePanel.add(invoiceTotalPanel);
         invoiceItemsTableLabelPanel.add(invoiceItemsLabel);
-        rightSideTopPanel.add(invoiceItemsTableLabelPanel);
-        rightSidePanel.add(rightSideTopPanel);
+        rightSidePanel.add(invoiceItemsTableLabelPanel);
         rightSidePanel.add(new JScrollPane(invoiceItemsTable));
         rightSideBottomPanel.add(saveChangesBtn);
         rightSideBottomPanel.add(cancelChangesBtn);
         rightSidePanel.add(rightSideBottomPanel);
 
-        initiallyLoadInvoicesData();
+        tableController.initiallyLoadInvoicesData(invoicesData, invoicesTableModel,
+                invoiceItemsTableModel,
+                invoiceItemsTable);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
 
-    public void showInvoicesTableRowDetails(){
-        var invoiceData =  invoicesTableModel.getDataVector().get(invoicesTable.getSelectedRow());
-        invoiceNumValue.setText(invoiceData.get(0).toString());
-        invoiceDateInput.setText(invoiceData.get(1).toString());
-        customerNameInput.setText(invoiceData.get(2).toString());
-        invoiceTotalValue.setText(invoiceData.get(3).toString());
-    }
-
-    public void initiallyLoadInvoicesData() {
-        try {
-            invoicesData = Controller.preread("invoices");
-            addInvoicesToTable(invoicesData);
-
-            invoicesData = Controller.preread("items");
-            addItemsToTable(invoicesData);
-        }catch (IOException ex) {
-            JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.PLAIN_MESSAGE);
-        }
-    }
-
-    public void saveInvoiceItemsChanges() {
-        try {
-            Controller.saveItems(invoiceItemsTable);
-        }catch (IOException ex) {
-            JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.PLAIN_MESSAGE);
-        }
-    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -217,7 +192,7 @@ public class GUI extends JFrame implements ActionListener {
 
                     try {
                         invoicesData = Controller.loadFile(filePath);
-                        addInvoicesToTable(invoicesData);
+                        tableController.addInvoicesToTable(invoicesData, invoicesTableModel);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(null,ex.getMessage(),
                                 "Error",JOptionPane.PLAIN_MESSAGE);
@@ -237,7 +212,8 @@ public class GUI extends JFrame implements ActionListener {
 
                     try {
                         invoicesData = Controller.loadFile(filePath);
-                        addItemsToTable(invoicesData);
+                        tableController.addItemsToTable(invoicesData, invoiceItemsTableModel,
+                                invoiceItemsTable);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(null,ex.getMessage(),
                                 "Error",JOptionPane.PLAIN_MESSAGE);
@@ -257,13 +233,13 @@ public class GUI extends JFrame implements ActionListener {
                 break;
 
             case "I":
-                saveInvoiceItemsChanges();
+                Controller.saveInvoiceItemsChanges(invoiceItemsTable);
                 break;
 
             case "C":
                 try {
                     invoicesData = Controller.preread("items");
-                    addItemsToTable(invoicesData);
+                    tableController.addItemsToTable(invoicesData, invoiceItemsTableModel, invoiceItemsTable);
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.PLAIN_MESSAGE);
                 }
@@ -283,32 +259,4 @@ public class GUI extends JFrame implements ActionListener {
                 break;
         }
     }
-
-    public void addInvoicesToTable(String[][] rows){
-        invoicesTableModel.getDataVector().removeAllElements();
-        for (var row : rows) {
-            invoicesTableModel.addRow(row);
-        }
-//        invoicesTable.getColumnModel().getColumn(1).setCellRenderer(new DateCellRenderer());
-    }
-
-    public void addItemsToTable(String[][] rows){
-        invoiceItemsTableModel.getDataVector().removeAllElements();
-        for (var row : rows) {
-            invoiceItemsTableModel.addRow(row);
-
-        }
-        fillItemsTotal();
-    }
-
-    public void fillItemsTotal(){
-        for (int i=0; i< invoiceItemsTable.getRowCount();i++)
-        {
-            float price = Float.parseFloat(invoiceItemsTable.getValueAt(i,2).toString());
-            int no = Integer.parseInt(invoiceItemsTable.getValueAt(i,3).toString());
-            invoiceItemsTable.setValueAt(price*no, i, 4);
-        }
-
-    }
-
 }
