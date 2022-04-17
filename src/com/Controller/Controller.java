@@ -21,6 +21,7 @@ public class Controller {
         bytes = new byte[fileSize];
         fileInput.read(bytes);
         returnedData= new String(bytes);
+//        System.out.println(returnedData);
         fileInput.close();
         return returnedData;
     }
