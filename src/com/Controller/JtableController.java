@@ -3,6 +3,7 @@ package com.Controller;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
+import java.util.Vector;
 
 public class JtableController {
     private final Controller Controller = new Controller();
@@ -12,7 +13,7 @@ public class JtableController {
             JLabel num, JTextField date,
             JTextField customer, JLabel total)
     {
-        var invoiceData =  invoicesTableModel.getDataVector().get(invoicesTable.getSelectedRow());
+        Vector invoiceData =  invoicesTableModel.getDataVector().get(invoicesTable.getSelectedRow());
         num.setText(invoiceData.get(0).toString());
         date.setText(invoiceData.get(1).toString());
         customer.setText(invoiceData.get(2).toString());
@@ -34,7 +35,7 @@ public class JtableController {
 
     public void addInvoicesToTable(String[][] rows,DefaultTableModel invoicesTableModel){
         invoicesTableModel.getDataVector().removeAllElements();
-        for (var row : rows) {
+        for (String[] row : rows) {
             invoicesTableModel.addRow(row);
         }
 //        invoicesTable.getColumnModel().getColumn(1).setCellRenderer(new DateCellRenderer());
@@ -43,7 +44,7 @@ public class JtableController {
     public void addItemsToTable(String[][] rows, DefaultTableModel invoiceItemsTableModel,
                                 JTable invoiceItemsTable ){
         invoiceItemsTableModel.getDataVector().removeAllElements();
-        for (var row : rows) {
+        for (String[] row : rows) {
             invoiceItemsTableModel.addRow(row);
 
         }
