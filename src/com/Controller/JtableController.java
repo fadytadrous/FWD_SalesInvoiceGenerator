@@ -13,7 +13,8 @@ public class JtableController {
             JLabel num, JTextField date,
             JTextField customer, JLabel total)
     {
-        Vector invoiceData =  invoicesTableModel.getDataVector().get(invoicesTable.getSelectedRow());
+        Object invoiceDataObj =  invoicesTableModel.getDataVector().get(invoicesTable.getSelectedRow());
+        Vector invoiceData = (Vector)invoiceDataObj;
         num.setText(invoiceData.get(0).toString());
         date.setText(invoiceData.get(1).toString());
         customer.setText(invoiceData.get(2).toString());
