@@ -27,7 +27,7 @@ public class Controller {
     }
     public String[][] preread(String fileType) throws IOException {
 
-        rows = readInitialFileContent(fileType).split("\r\n");
+        rows = readInitialFileContent(fileType).split("\n");
         return fillTableData(rows);
     }
     public String readInitialFileContent(String fileType) throws IOException {
@@ -50,7 +50,7 @@ public class Controller {
         return tableData;
     }
     public String[][] loadFile(String file) throws IOException {
-        rows = readFileContent(file).split("\r\n");
+        rows = readFileContent(file).split("\n");
         return fillTableData(rows);
     }
 
