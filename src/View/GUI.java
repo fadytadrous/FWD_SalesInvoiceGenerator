@@ -1,8 +1,6 @@
-package com.GUI;
+package View;
 
-import com.Controller.Controller;
-import com.Controller.DateCellRenderer;
-import com.Controller.JtableController;
+import Controller.*;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;

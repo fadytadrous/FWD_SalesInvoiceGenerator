@@ -1,4 +1,4 @@
-package com.Controller;
+package Controller;
 
 import javax.swing.table.DefaultTableCellRenderer;
 import java.text.SimpleDateFormat;

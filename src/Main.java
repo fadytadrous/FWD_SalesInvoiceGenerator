@@ -1,4 +1,4 @@
-import com.GUI.GUI;
+import View.GUI;
 
 public class Main {
 
