@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 
 public class GUI extends JFrame implements ActionListener {
@@ -223,7 +224,7 @@ public class GUI extends JFrame implements ActionListener {
                 if(fileSelector.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                     filePath=fileSelector.getSelectedFile().getPath();
                     try {
-                        Controller.saveInvoicesToFile(filePath,invoicesTable);
+                        Controller.saveInvoicesToFile(filePath,invoicesTable, true);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.PLAIN_MESSAGE);
                     }
@@ -231,7 +232,14 @@ public class GUI extends JFrame implements ActionListener {
                 break;
 
             case "I":
-                Controller.saveInvoiceItemsChanges(invoiceItemsTable);
+                try {
+                    String filePath = Paths.get("").toAbsolutePath() + "\\resources\\InvoiceHeader.csv";
+
+                    Controller.saveInvoiceItemsChanges(invoiceItemsTable);
+                    Controller.saveInvoicesToFile(filePath,invoicesTable,false);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.PLAIN_MESSAGE);
+                }
                 break;
 
             case "C":
