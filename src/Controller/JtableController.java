@@ -59,5 +59,7 @@ public class JtableController {
         }
     }
 
-
+//    public void fillItemsTotal(){
+//
+//    }
 }

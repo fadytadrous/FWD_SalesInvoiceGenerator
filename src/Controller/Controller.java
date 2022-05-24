@@ -6,25 +6,11 @@ import java.io.*;
 import java.nio.file.Paths;
 
 public class Controller {
-    File currentDir = new File(".");
-    int fileSize;
-    String returnedData;
-    byte[] bytes;
-    FileInputStream fileInput;
-    FileOutputStream fileOutput;
-    private String[] rows;
-    private String[][] tableData;
+    FileOperations fileOperations = new FileOperations();
 
-    public String readFileContent(String filePath) throws IOException {
-        fileInput = new FileInputStream(filePath);
-        fileSize = fileInput.available();
-        bytes = new byte[fileSize];
-        fileInput.read(bytes);
-        returnedData= new String(bytes);
-//        System.out.println(returnedData);
-        fileInput.close();
-        return returnedData;
-    }
+    private String[] rows;
+    
+
     public String[][] preread(String fileType) throws IOException {
 
         rows = readInitialFileContent(fileType).split("\n");
@@ -40,7 +26,7 @@ public class Controller {
 
         }
 
-        return readFileContent(filePath);
+        return fileOperations.readFileContent(filePath);
     }
     private String[][] fillTableData(String[] rows){
         String[][] tableData = new String[rows.length][rows[0].split(",").length];
@@ -50,40 +36,17 @@ public class Controller {
         return tableData;
     }
     public String[][] loadFile(String file) throws IOException {
-        rows = readFileContent(file).split("\n");
+        rows = fileOperations.readFileContent(file).split("\n");
         return fillTableData(rows);
     }
 
     
 
-    public void saveInvoicesToFile(String path, JTable table, Boolean headers) throws IOException {
-        TableModel m = table.getModel();
-        if(!path.endsWith(".csv")){
-            path = path + ".csv";
-        }
-        FileWriter fw = new FileWriter(path);
-//        if(headers){
-//            /*Writing Col names*/
-//            for(int i = 0; i < m.getColumnCount(); i++){
-//                fw.write(m.getColumnName(i) + ",");
-//            }
-//            fw.write("\n");
-//
-//        }
-        /*Writing row names*/
-        for(int i = 0; i < m.getRowCount(); i++) {
-            for(int j=0; j < m.getColumnCount()-1; j++) {
-                fw.write(m.getValueAt(i,j) +",");
-            }
-            fw.write("\n");
-        }
-        fw.close();
-    }
 
 
     public void saveItems(JTable table) throws IOException {
         String filePath = Paths.get("").toAbsolutePath() + "\\resources\\InvoiceItems.csv";
-        saveInvoicesToFile(filePath, table, true);
+        fileOperations.writeFile(filePath, table, true);
     }
 
     public void saveInvoiceItemsChanges(JTable invoicesItemsTable) {

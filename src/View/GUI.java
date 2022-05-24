@@ -51,6 +51,7 @@ public class GUI extends JFrame implements ActionListener {
     private final String[] invoiceItemsTableColumns = {"No.","Item Name","Item Price","Count","Item Total"};
     private String filePath;
     private final Controller Controller = new Controller();
+    private final FileOperations fileOperations = new FileOperations();
     private final JtableController tableController = new JtableController();
     private String[][] invoicesData;
 
@@ -224,7 +225,7 @@ public class GUI extends JFrame implements ActionListener {
                 if(fileSelector.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                     filePath=fileSelector.getSelectedFile().getPath();
                     try {
-                        Controller.saveInvoicesToFile(filePath,invoicesTable, true);
+                       fileOperations.writeFile(filePath,invoicesTable, true);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.PLAIN_MESSAGE);
                     }
@@ -236,7 +237,7 @@ public class GUI extends JFrame implements ActionListener {
                     String filePath = Paths.get("").toAbsolutePath() + "\\resources\\InvoiceHeader.csv";
 
                     Controller.saveInvoiceItemsChanges(invoiceItemsTable);
-                    Controller.saveInvoicesToFile(filePath,invoicesTable,false);
+                    fileOperations.writeFile(filePath,invoicesTable,false);
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.PLAIN_MESSAGE);
                 }
