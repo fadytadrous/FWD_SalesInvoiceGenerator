@@ -34,13 +34,12 @@ public class JtableController {
         }
     }
 
-    public void addInvoicesToTable(String[][] rows,DefaultTableModel invoicesTableModel){
+    public void addInvoicesToTable(String[][] rows,DefaultTableModel invoicesTableModel ){
         invoicesTableModel.getDataVector().removeAllElements();
         for (String[] row : rows) {
             invoicesTableModel.addRow(row);
         }
-//        invoicesTable.getColumnModel().getColumn(1).setCellRenderer(new DateCellRenderer());
-    }
+   }
 
     public void addItemsToTable(String[][] rows, DefaultTableModel invoiceItemsTableModel,
                                 JTable invoiceItemsTable ){
@@ -59,7 +58,4 @@ public class JtableController {
         }
     }
 
-//    public void fillItemsTotal(){
-//
-//    }
 }

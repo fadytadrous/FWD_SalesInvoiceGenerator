@@ -20,7 +20,7 @@ public class FileOperations {
         bytes = new byte[fileSize];
         fileInput.read(bytes);
         returnedData= new String(bytes);
-//        System.out.println(returnedData);
+        System.out.println(returnedData);
         fileInput.close();
         return returnedData;
     }

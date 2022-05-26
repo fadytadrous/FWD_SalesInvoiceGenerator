@@ -1,10 +1,17 @@
 package Model;
 
-public class invoiceHeader {
+public class InvoiceHeader {
     private String invoiceNumber;
-    private String filePath;
-    private invoiceLines[] invoiceItems;
+    private String invoiceDate;
+    private String customerName;
+    private InvoiceLines[] invoiceItems;
     private int invoiceItemsCounter;
+
+    public InvoiceHeader(String invoiceNumber, String invoiceDate, String customerName) {
+        this.invoiceNumber = invoiceNumber;
+        this.invoiceDate = invoiceDate;
+        this.customerName = customerName;
+    }
 
     private int totalInvoicePrice = 0;
 
@@ -16,19 +23,28 @@ public class invoiceHeader {
         this.invoiceNumber = invoiceNumber;
     }
 
-    public String getFilePath() {
-        return filePath;
+
+    public String getInvoiceDate() {
+        return invoiceDate;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setInvoiceDate(String invoiceDate) {
+        this.invoiceDate = invoiceDate;
     }
 
-    public invoiceLines[] getInvoiceItems() {
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public InvoiceLines[] getInvoiceItems() {
         return invoiceItems;
     }
 
-    public void setInvoiceItems(invoiceLines[] invoiceItems) {
+    public void setInvoiceItems(InvoiceLines[] invoiceItems) {
         this.invoiceItems = invoiceItems;
     }
 

@@ -55,6 +55,10 @@ public class GUI extends JFrame implements ActionListener {
     private final JtableController tableController = new JtableController();
     private String[][] invoicesData;
 
+//    private InvoiceHeader invoiceHeader = new InvoiceHeader();
+//    private InvoiceLines invoiceLine = new InvoiceLines();
+
+
     public GUI(){
         super("SIG App");
         setSize(1000,600);
@@ -99,7 +103,13 @@ public class GUI extends JFrame implements ActionListener {
         createNewInvoiceBtn = new JButton("Create New Invoice");
         deleteInvoiceBtn = new JButton("Delete Invoice");
         /**Tables**/
-        invoicesTableModel = new DefaultTableModel();
+        invoicesTableModel = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return column==1 || column==2;
+            }
+        };
+
         invoicesTable = new JTable(invoicesTableModel);
         invoiceItemsTableModel = new DefaultTableModel();
         invoiceItemsTable = new JTable(invoiceItemsTableModel);
@@ -108,7 +118,6 @@ public class GUI extends JFrame implements ActionListener {
             invoicesTableModel.addColumn(invoicesTableColumns[i]);
             invoiceItemsTableModel.addColumn(invoiceItemsTableColumns[i+1]);
         }
-
 
 
         loadMenuItem.setActionCommand("L");
@@ -191,7 +200,7 @@ public class GUI extends JFrame implements ActionListener {
                     }
 
                     try {
-                        invoicesData = Controller.loadFile(filePath);
+                        invoicesData = Controller.loadFile(filePath, "invoices");
                         tableController.addInvoicesToTable(invoicesData, invoicesTableModel);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(null,ex.getMessage(),
@@ -211,7 +220,7 @@ public class GUI extends JFrame implements ActionListener {
                     }
 
                     try {
-                        invoicesData = Controller.loadFile(filePath);
+                        invoicesData = Controller.loadFile(filePath, "items");
                         tableController.addItemsToTable(invoicesData, invoiceItemsTableModel,
                                 invoiceItemsTable);
                     } catch (IOException ex) {
@@ -238,6 +247,10 @@ public class GUI extends JFrame implements ActionListener {
 
                     Controller.saveInvoiceItemsChanges(invoiceItemsTable);
                     fileOperations.writeFile(filePath,invoicesTable,false);
+
+                    JOptionPane.showMessageDialog(
+                            null,"Invoice Header and Files saved successfully"
+                            ,"Info",JOptionPane.PLAIN_MESSAGE);
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.PLAIN_MESSAGE);
                 }
@@ -253,7 +266,10 @@ public class GUI extends JFrame implements ActionListener {
                 break;
 
             case "N":
-                invoicesTableModel.addRow(new String[]{"", "", "", ""});
+                String lastInv = (String) invoicesTable
+                        .getValueAt(invoicesTable.getModel().getRowCount()-1,0);
+                String newInvNo = String.valueOf(Integer.parseInt(lastInv)+1);
+                invoicesTableModel.addRow(new String[]{newInvNo, "", "", ""});
                 break;
 
             case "D":
@@ -266,4 +282,6 @@ public class GUI extends JFrame implements ActionListener {
                 break;
         }
     }
+
+
 }
