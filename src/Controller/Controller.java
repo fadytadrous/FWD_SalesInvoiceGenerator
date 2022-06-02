@@ -42,6 +42,7 @@ public class Controller {
 
         String[][] tableData = new String[rows.length][rows[0].split(",").length];
         if(filetype == "invoices"){
+            header.clear();
             for (int rowsCounter = 0;rowsCounter<rows.length;rowsCounter++){
                 String[] dataArray = rows[rowsCounter].split(",");
                 header.add(new InvoiceHeader(dataArray[0],dataArray[1],dataArray[2]));
@@ -52,7 +53,7 @@ public class Controller {
         }
         else if (filetype=="items") {
             Hashtable<Integer, Integer> itemsCount = new Hashtable<Integer, Integer>();
-
+            items.clear();
             for (int rowsCounter = 0; rowsCounter < rows.length; rowsCounter++) {
                 String[] dataArray = rows[rowsCounter].split(",");
 
@@ -96,7 +97,8 @@ public class Controller {
 
     public void saveItems(JTable table) throws IOException {
         String filePath = Paths.get("").toAbsolutePath() + "\\resources\\InvoiceLine.csv";
-        fileOperations.writeFile(filePath, table, true, true);
+        checkNewItems(table);
+        fileOperations.writeFile(filePath, table, false, true);
     }
 
     public void saveInvoiceItemsChanges(JTable invoicesItemsTable) {
@@ -115,9 +117,33 @@ public class Controller {
             for(InvoiceLines item: items){
                 if(item.getItemName().contains(selectedItemName)){
                     items.remove(item);
+                    break;
                 }
             }
             itemsTableModel.removeRow(itemsTable.getSelectedRow());
+        }
+    }
+
+    public void checkNewItems(JTable invoiceItemsTable) {
+        for (int i=0; i< invoiceItemsTable.getRowCount();i++)
+        {
+            String itemInvNo = (String) invoiceItemsTable.getValueAt(i,0);
+            String itemName =  (String) invoiceItemsTable.getValueAt(i,1);
+            String itemPrice = (String) invoiceItemsTable.getValueAt(i, 2);
+            String itemCount = (String) invoiceItemsTable.getValueAt(i, 3);
+
+            Boolean itemExists = false;
+            for(InvoiceLines item: Controller.items){
+                if(item.getInvoiceNumber().contains(itemInvNo) && item.getItemName().contains(itemName))
+                {
+                    itemExists =true;
+                    break;
+                }
+            }
+            if (!itemExists){
+                Controller.items.add(new InvoiceLines(itemInvNo,itemName, itemPrice,itemCount));
+            }
+
         }
     }
 }

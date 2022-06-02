@@ -149,17 +149,17 @@ public class GUI extends JFrame implements ActionListener {
         invoicesTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-//                try {
-                    tableController.checkNewItems(invoiceItemsTable);
+                try {
+                    Controller.checkNewItems(invoiceItemsTable);
                     tableController.showInvoicesTableRowDetails(invoicesTableModel,
                             invoicesTable,invoiceNumValue, invoiceDateInput,
                             invoiceItemsTableModel, customerNameInput, invoiceTotalValue);
 
-//                }
-//                catch (NullPointerException ex){
-//                    JOptionPane.showMessageDialog(null,ex.getMessage(),
-//                            "Error",JOptionPane.PLAIN_MESSAGE);
-//                }
+                }
+                catch (NullPointerException ex){
+                    JOptionPane.showMessageDialog(null,ex.getMessage(),
+                            "Error",JOptionPane.PLAIN_MESSAGE);
+                }
             }
         });
 

@@ -39,28 +39,7 @@ public class JtableController {
 
     }
 
-    public void checkNewItems(JTable invoiceItemsTable) {
-        for (int i=0; i< invoiceItemsTable.getRowCount();i++)
-        {
-            String itemInvNo = (String) invoiceItemsTable.getValueAt(i,0);
-            String itemName =  (String) invoiceItemsTable.getValueAt(i,1);
-            String itemPrice = (String) invoiceItemsTable.getValueAt(i, 2);
-            String itemCount = (String) invoiceItemsTable.getValueAt(i, 3);
 
-            Boolean itemExists = false;
-            for(InvoiceLines item: Controller.items){
-                if(item.getInvoiceNumber().contains(itemInvNo) && item.getItemName().contains(itemName))
-                {
-                    itemExists =true;
-                    break;
-                }
-            }
-            if (!itemExists){
-                Controller.items.add(new InvoiceLines(itemInvNo,itemName, itemPrice,itemCount));
-            }
-
-        }
-    }
 
     public void initiallyLoadInvoicesData(String[][] invoicesData, DefaultTableModel invoicesTableModel,
                                           DefaultTableModel invoiceItemsTableModel, JTable invoiceItemsTable ) {
