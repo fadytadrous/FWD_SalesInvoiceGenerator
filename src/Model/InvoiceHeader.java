@@ -13,7 +13,7 @@ public class InvoiceHeader {
         this.customerName = customerName;
     }
 
-    private int totalInvoicePrice = 0;
+    private float totalInvoicePrice = 0;
 
     public String getInvoiceNumber() {
         return invoiceNumber;
@@ -56,11 +56,11 @@ public class InvoiceHeader {
         this.invoiceItemsCounter = invoiceItemsCounter;
     }
 
-    public int getTotalInvoicePrice() {
+    public float getTotalInvoicePrice() {
         return totalInvoicePrice;
     }
 
-    public void setTotalInvoicePrice(int totalInvoicePrice) {
+    public void setTotalInvoicePrice(float totalInvoicePrice) {
         this.totalInvoicePrice = totalInvoicePrice;
     }
 }

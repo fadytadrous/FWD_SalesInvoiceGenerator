@@ -13,6 +13,8 @@ public class InvoiceLines {
         this.itemName = itemName;
         this.itemPrice = itemPrice;
         this.itemCount = itemCount;
+        Float totalItem =  Float.parseFloat(itemPrice)*Integer.parseInt(itemCount);
+        this.totalItemPrice = totalItem.toString();
     }
 
     public String getInvoiceNumber() {
