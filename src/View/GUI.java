@@ -12,7 +12,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.nio.file.Paths;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Vector;
+import java.util.List;
 
 public class GUI extends JFrame implements ActionListener {
     private final JPanel leftSidePanel;
@@ -46,17 +49,19 @@ public class GUI extends JFrame implements ActionListener {
     private final JButton createNewInvoiceBtn;
     private final JButton deleteInvoiceBtn;
     private final JButton saveChangesBtn;
+    private final JButton addItemBtn;
+    private final JButton deleteItemBtn;
     private final JButton cancelChangesBtn;
     private final String[] invoicesTableColumns = {"No.","Date","Customer","Total"};
     private final String[] invoiceItemsTableColumns = {"No.","Item Name","Item Price","Count","Item Total"};
     private String filePath;
-    private final Controller Controller = new Controller();
-    private final FileOperations fileOperations = new FileOperations();
-    private final JtableController tableController = new JtableController();
+
+
+    private Controller Controller = new Controller();
+    private FileOperations fileOperations = new FileOperations();
+    private JtableController tableController = new JtableController();
     private String[][] invoicesData;
 
-//    private InvoiceHeader invoiceHeader = new InvoiceHeader();
-//    private InvoiceLines invoiceLine = new InvoiceLines();
 
 
     public GUI(){
@@ -100,6 +105,8 @@ public class GUI extends JFrame implements ActionListener {
         invoiceDateInput.setSize(20,7);
         saveChangesBtn = new JButton("Save");
         cancelChangesBtn = new JButton("Cancel");
+        addItemBtn = new JButton("New Item");
+        deleteItemBtn = new JButton("Delete Item");
         createNewInvoiceBtn = new JButton("Create New Invoice");
         deleteInvoiceBtn = new JButton("Delete Invoice");
         /**Tables**/
@@ -126,11 +133,15 @@ public class GUI extends JFrame implements ActionListener {
         cancelChangesBtn.setActionCommand("C");
         createNewInvoiceBtn.setActionCommand("N");
         deleteInvoiceBtn.setActionCommand("D");
+        addItemBtn.setActionCommand("AI");
+        deleteItemBtn.setActionCommand("DI");
 
 
         loadMenuItem.addActionListener(this);
         saveMenuItem.addActionListener(this);
         saveChangesBtn.addActionListener(this);
+        addItemBtn.addActionListener(this);
+        deleteItemBtn.addActionListener(this);
         cancelChangesBtn.addActionListener(this);
         createNewInvoiceBtn.addActionListener(this);
         deleteInvoiceBtn.addActionListener(this);
@@ -138,9 +149,17 @@ public class GUI extends JFrame implements ActionListener {
         invoicesTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                tableController.showInvoicesTableRowDetails(invoicesTableModel,
-                        invoicesTable,invoiceNumValue,
-                        invoiceDateInput, customerNameInput, invoiceTotalValue);
+//                try {
+                    tableController.checkNewItems(invoiceItemsTable);
+                    tableController.showInvoicesTableRowDetails(invoicesTableModel,
+                            invoicesTable,invoiceNumValue, invoiceDateInput,
+                            invoiceItemsTableModel, customerNameInput, invoiceTotalValue);
+
+//                }
+//                catch (NullPointerException ex){
+//                    JOptionPane.showMessageDialog(null,ex.getMessage(),
+//                            "Error",JOptionPane.PLAIN_MESSAGE);
+//                }
             }
         });
 
@@ -169,11 +188,14 @@ public class GUI extends JFrame implements ActionListener {
         rightSidePanel.add(new JScrollPane(invoiceItemsTable));
         rightSideBottomPanel.add(saveChangesBtn);
         rightSideBottomPanel.add(cancelChangesBtn);
+        rightSideBottomPanel.add(addItemBtn);
+        rightSideBottomPanel.add(deleteItemBtn);
         rightSidePanel.add(rightSideBottomPanel);
 
         tableController.initiallyLoadInvoicesData(invoicesData, invoicesTableModel,
                 invoiceItemsTableModel,
                 invoiceItemsTable);
+
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
@@ -202,6 +224,7 @@ public class GUI extends JFrame implements ActionListener {
                     try {
                         invoicesData = Controller.loadFile(filePath, "invoices");
                         tableController.addInvoicesToTable(invoicesData, invoicesTableModel);
+
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(null,ex.getMessage(),
                                 "Error",JOptionPane.PLAIN_MESSAGE);
@@ -223,6 +246,7 @@ public class GUI extends JFrame implements ActionListener {
                         invoicesData = Controller.loadFile(filePath, "items");
                         tableController.addItemsToTable(invoicesData, invoiceItemsTableModel,
                                 invoiceItemsTable);
+                        Controller.calculateInvoicesTotal(invoicesTableModel);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(null,ex.getMessage(),
                                 "Error",JOptionPane.PLAIN_MESSAGE);
@@ -234,7 +258,7 @@ public class GUI extends JFrame implements ActionListener {
                 if(fileSelector.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                     filePath=fileSelector.getSelectedFile().getPath();
                     try {
-                       fileOperations.writeFile(filePath,invoicesTable, true);
+                       fileOperations.writeFile(filePath,invoicesTable, true, false);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.PLAIN_MESSAGE);
                     }
@@ -246,7 +270,7 @@ public class GUI extends JFrame implements ActionListener {
                     String filePath = Paths.get("").toAbsolutePath() + "\\resources\\InvoiceHeader.csv";
 
                     Controller.saveInvoiceItemsChanges(invoiceItemsTable);
-                    fileOperations.writeFile(filePath,invoicesTable,false);
+                    fileOperations.writeFile(filePath,invoicesTable,false, false);
 
                     JOptionPane.showMessageDialog(
                             null,"Invoice Header and Files saved successfully"
@@ -260,6 +284,7 @@ public class GUI extends JFrame implements ActionListener {
                 try {
                     invoicesData = Controller.preread("items");
                     tableController.addItemsToTable(invoicesData, invoiceItemsTableModel, invoiceItemsTable);
+//                    Controller.calculateInvoicesTotal(invoicesTableModel);
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.PLAIN_MESSAGE);
                 }
@@ -269,7 +294,10 @@ public class GUI extends JFrame implements ActionListener {
                 String lastInv = (String) invoicesTable
                         .getValueAt(invoicesTable.getModel().getRowCount()-1,0);
                 String newInvNo = String.valueOf(Integer.parseInt(lastInv)+1);
-                invoicesTableModel.addRow(new String[]{newInvNo, "", "", ""});
+                Vector<Object> newInvoice = new Vector<Object>();
+
+                Collections.addAll(newInvoice,newInvNo, "", "", 0f);
+                invoicesTableModel.addRow(newInvoice);
                 break;
 
             case "D":
@@ -277,7 +305,13 @@ public class GUI extends JFrame implements ActionListener {
                     invoicesTableModel.removeRow(invoicesTable.getSelectedRow());
                 }
                 break;
+            case "AI":
+                invoiceItemsTableModel.addRow(new String[]{"","","",""});
+                break;
 
+            case "DI":
+                Controller.deleteItem(invoiceItemsTable, invoiceItemsTableModel);
+                break;
             default:
                 break;
         }
