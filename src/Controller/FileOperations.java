@@ -1,5 +1,7 @@
 package Controller;
 
+import Model.InvoiceLines;
+
 import javax.swing.*;
 import javax.swing.table.TableModel;
 import java.io.FileInputStream;
@@ -25,7 +27,7 @@ public class FileOperations {
         return returnedData;
     }
 
-    public void writeFile(String path, JTable table, Boolean headers) throws IOException {
+    public void writeFile(String path, JTable table, Boolean headers, Boolean itemsFile) throws IOException {
         TableModel m = table.getModel();
         if(!path.endsWith(".csv")){
             path = path + ".csv";
@@ -39,14 +41,26 @@ public class FileOperations {
 //            fw.write("\n");
 //
 //        }
-        /*Writing row names*/
-        for(int i = 0; i < m.getRowCount(); i++) {
-            for(int j=0; j < m.getColumnCount()-1; j++) {
-                fw.write(m.getValueAt(i,j) +",");
+        if (itemsFile){
+            for(InvoiceLines item: Controller.items) {
+                fw.write(item.getInvoiceNumber() +",");
+                fw.write(item.getItemName() +",");
+                fw.write(item.getItemCount() +",");
+                fw.write(item.getItemPrice() +",");
+                fw.write("\n");
             }
-            fw.write("\n");
+        }
+        else{
+            /*Writing header rows*/
+            for(int i = 0; i < m.getRowCount(); i++) {
+                for(int j=0; j < m.getColumnCount()-1; j++) {
+                    fw.write(m.getValueAt(i,j) +",");
+                }
+                fw.write("\n");
+            }
         }
         fw.close();
+
     }
 
 }
