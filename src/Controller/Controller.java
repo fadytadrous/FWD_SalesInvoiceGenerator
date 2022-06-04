@@ -18,8 +18,10 @@ public class Controller {
 
     private String[] rows;
     public static List<InvoiceHeader> header = new ArrayList<InvoiceHeader>();
-    public static List<InvoiceLines> items = new ArrayList<InvoiceLines>();
+    public static String headerFilePath = Paths.get("").toAbsolutePath() + "\\resources\\InvoiceHeader.csv";
 
+    public static List<InvoiceLines> items = new ArrayList<InvoiceLines>();
+    public static String itemsFilePath =Paths.get("").toAbsolutePath() + "\\resources\\InvoiceLine.csv";
 
     public String[][] preread(String fileType) throws IOException {
 
@@ -29,11 +31,10 @@ public class Controller {
     public String readInitialFileContent(String fileType) throws IOException {
         String filePath = "";
         if (fileType == "invoices") {
-            filePath = Paths.get("").toAbsolutePath() + "\\resources\\InvoiceHeader.csv";
+            filePath = headerFilePath;
         }
         else if (fileType == "items"){
-            filePath = Paths.get("").toAbsolutePath() + "\\resources\\InvoiceLine.csv";
-
+            filePath = itemsFilePath;
         }
 
         return fileOperations.readFileContent(filePath);
@@ -76,20 +77,33 @@ public class Controller {
 
         return tableData;
     }
-    public String[][] loadFile(String file, String fileType) throws IOException {
-        rows = fileOperations.readFileContent(file).split("\n");
+    public String[][] loadFile(String filepath, String fileType) throws IOException {
+
+        rows = fileOperations.readFileContent(filepath).split("\n");
+        if(fileType == "invoices"){
+            headerFilePath = filepath;
+        }
+        else{
+            itemsFilePath = filepath;
+        }
         return fillTableData(rows, fileType);
     }
 
     
     public void calculateInvoicesTotal(DefaultTableModel invoicesTableModel){
+        for(int i=0;i<invoicesTableModel.getRowCount();i++){
+            invoicesTableModel.setValueAt(0f,i,3);
+        }
+
         for (InvoiceLines item : items) {
             int invNoForItem = Integer.parseInt(item.getInvoiceNumber());
             header.get(invNoForItem-1).setTotalInvoicePrice(
                 header.get(invNoForItem-1).getTotalInvoicePrice()+
                         Float.parseFloat(item.getTotalItemPrice()));
-            invoicesTableModel.setValueAt(header.get(invNoForItem-1)
-                    .getTotalInvoicePrice(),invNoForItem-1,3);
+
+                invoicesTableModel.setValueAt(header.get(invNoForItem-1)
+                        .getTotalInvoicePrice(),invNoForItem-1,3);
+
         }
 
     }

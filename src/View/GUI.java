@@ -215,6 +215,7 @@ public class GUI extends JFrame implements ActionListener {
                 if(fileSelector.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 
                     filePath=fileSelector.getSelectedFile().getPath();
+
                     if (!filePath.endsWith(".csv")){
                         JOptionPane.showMessageDialog(null,"Wrong File format",
                                 "Error",JOptionPane.ERROR_MESSAGE);
@@ -246,6 +247,7 @@ public class GUI extends JFrame implements ActionListener {
                         invoicesData = Controller.loadFile(filePath, "items");
                         tableController.addItemsToTable(invoicesData, invoiceItemsTableModel,
                                 invoiceItemsTable);
+
                         Controller.calculateInvoicesTotal(invoicesTableModel);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(null,ex.getMessage(),

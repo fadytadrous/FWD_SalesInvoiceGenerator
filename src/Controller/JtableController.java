@@ -27,13 +27,15 @@ public class JtableController {
         date.setText((String) invoiceData.get(1));
         customer.setText((String) invoiceData.get(2));
         total.setText(Float.toString((Float) invoiceData.get(3)));
-
         invoiceItemsTableModel.getDataVector().removeAllElements();
+        Float totalInvoice = 0f;
         for (InvoiceLines item : Controller.items) {
             if(invoiceNo.matches(item.getInvoiceNumber())){
                 String[] data = {item.getInvoiceNumber(),item.getItemName(),
                         item.getItemPrice(),item.getItemCount (),item.getTotalItemPrice() };
                 invoiceItemsTableModel.addRow(data);
+                totalInvoice+= Float.parseFloat(item.getTotalItemPrice());
+                invoicesTableModel.setValueAt(totalInvoice,invoicesTable.getSelectedRow(),3);
             }
         }
 
