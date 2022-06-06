@@ -304,7 +304,8 @@ public class GUI extends JFrame implements ActionListener {
 
             case "D":
                 try {
-                    Controller.deleteHeader(invoicesTable, invoicesTableModel, invoiceItemsTable);
+                    Controller.deleteHeader(invoicesTable, invoicesTableModel,
+                            invoiceItemsTable, invoiceItemsTableModel);
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(null,ex.getMessage(),
                             "Error",JOptionPane.PLAIN_MESSAGE);

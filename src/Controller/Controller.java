@@ -162,10 +162,12 @@ public class Controller {
         }
     }
 
-    public void deleteHeader(JTable invoicesTable, DefaultTableModel invoicesTableModel, JTable itemsTable) throws IOException {
+    public void deleteHeader(JTable invoicesTable, DefaultTableModel invoicesTableModel,
+                             JTable itemsTable, DefaultTableModel invoiceItemsTableModel) throws IOException {
         if(invoicesTable.getSelectedRow()!=-1) {
             String headerNo = (String) invoicesTableModel.getValueAt(invoicesTable.getSelectedRow(),0);
             invoicesTableModel.removeRow(invoicesTable.getSelectedRow());
+            invoiceItemsTableModel.setNumRows(0);
             fileOperations.writeFile(headerFilePath, invoicesTable,false,false);
             items.removeIf(item -> item.getInvoiceNumber().contains(headerNo));
             fileOperations.writeFile(itemsFilePath, itemsTable, false, true);
