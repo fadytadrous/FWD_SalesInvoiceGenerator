@@ -303,8 +303,11 @@ public class GUI extends JFrame implements ActionListener {
                 break;
 
             case "D":
-                if(invoicesTable.getSelectedRow()!=-1) {
-                    invoicesTableModel.removeRow(invoicesTable.getSelectedRow());
+                try {
+                    Controller.deleteHeader(invoicesTable, invoicesTableModel, invoiceItemsTable);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(null,ex.getMessage(),
+                            "Error",JOptionPane.PLAIN_MESSAGE);
                 }
                 break;
             case "AI":
@@ -312,7 +315,12 @@ public class GUI extends JFrame implements ActionListener {
                 break;
 
             case "DI":
-                Controller.deleteItem(invoiceItemsTable, invoiceItemsTableModel);
+                try {
+                    Controller.deleteItem(invoiceItemsTable, invoiceItemsTableModel);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(null,ex.getMessage(),
+                            "Error",JOptionPane.PLAIN_MESSAGE);
+                }
                 break;
             default:
                 break;

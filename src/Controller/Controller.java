@@ -123,7 +123,7 @@ public class Controller {
         }
     }
 
-    public void deleteItem(JTable itemsTable, DefaultTableModel itemsTableModel){
+    public void deleteItem(JTable itemsTable, DefaultTableModel itemsTableModel) throws IOException {
 
         if(itemsTable.getSelectedRow() != -1){
 
@@ -135,6 +135,7 @@ public class Controller {
                 }
             }
             itemsTableModel.removeRow(itemsTable.getSelectedRow());
+            fileOperations.writeFile(itemsFilePath, itemsTable, false, true);
         }
     }
 
@@ -157,6 +158,17 @@ public class Controller {
             if (!itemExists){
                 Controller.items.add(new InvoiceLines(itemInvNo,itemName, itemPrice,itemCount));
             }
+
+        }
+    }
+
+    public void deleteHeader(JTable invoicesTable, DefaultTableModel invoicesTableModel, JTable itemsTable) throws IOException {
+        if(invoicesTable.getSelectedRow()!=-1) {
+            String headerNo = (String) invoicesTableModel.getValueAt(invoicesTable.getSelectedRow(),0);
+            invoicesTableModel.removeRow(invoicesTable.getSelectedRow());
+            fileOperations.writeFile(headerFilePath, invoicesTable,false,false);
+            items.removeIf(item -> item.getInvoiceNumber().contains(headerNo));
+            fileOperations.writeFile(itemsFilePath, itemsTable, false, true);
 
         }
     }
