@@ -192,9 +192,9 @@ public class GUI extends JFrame implements ActionListener {
         rightSideBottomPanel.add(deleteItemBtn);
         rightSidePanel.add(rightSideBottomPanel);
 
-        tableController.initiallyLoadInvoicesData(invoicesData, invoicesTableModel,
-                invoiceItemsTableModel,
-                invoiceItemsTable);
+//        tableController.initiallyLoadInvoicesData(invoicesData, invoicesTableModel,
+//                invoiceItemsTableModel,
+//                invoiceItemsTable);
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }

@@ -5,8 +5,6 @@ import Model.InvoiceLines;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Vector;
 
 public class JtableController {
@@ -43,19 +41,19 @@ public class JtableController {
 
 
 
-    public void initiallyLoadInvoicesData(String[][] invoicesData, DefaultTableModel invoicesTableModel,
-                                          DefaultTableModel invoiceItemsTableModel, JTable invoiceItemsTable ) {
-        try {
-            invoicesData = Controller.preread("invoices");
-            addInvoicesToTable(invoicesData,invoicesTableModel );
-
-            invoicesData = Controller.preread("items");
-            addItemsToTable(invoicesData,invoiceItemsTableModel, invoiceItemsTable);
-            Controller.calculateInvoicesTotal(invoicesTableModel);
-        }catch (IOException ex) {
-            JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.PLAIN_MESSAGE);
-        }
-    }
+//    public void initiallyLoadInvoicesData(String[][] invoicesData, DefaultTableModel invoicesTableModel,
+//                                          DefaultTableModel invoiceItemsTableModel, JTable invoiceItemsTable ) {
+//        try {
+//            invoicesData = Controller.preread("invoices");
+//            addInvoicesToTable(invoicesData,invoicesTableModel );
+//
+//            invoicesData = Controller.preread("items");
+//            addItemsToTable(invoicesData,invoiceItemsTableModel, invoiceItemsTable);
+//            Controller.calculateInvoicesTotal(invoicesTableModel);
+//        }catch (IOException ex) {
+//            JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.PLAIN_MESSAGE);
+//        }
+//    }
 
     public void addInvoicesToTable(String[][] rows,DefaultTableModel invoicesTableModel ){
         invoicesTableModel.getDataVector().removeAllElements();
